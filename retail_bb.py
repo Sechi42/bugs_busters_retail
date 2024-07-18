@@ -1,9 +1,13 @@
-# # Area de pruebas
-
-
-# Carga y procesamiento de datos.
+# Librerías -----------------------------------------------------------------------------------
 import pandas as pd
 import os
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.cluster import KMeans
+import numpy as np
+
+# Funciones -----------------------------------------------------------------------------------
 
 def encabezados(df):
     '''
@@ -253,20 +257,6 @@ def process_dataset(file_path, output_directory, file_type='csv', **kwargs):
 
     return df
 
-
-
-# Ejemplo de uso
-file_path = './datasets/Online_Retail.csv'
-output_directory =  'datasets'
-df = process_dataset(file_path, output_directory)
-
-
-# Creación de métricas
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-
 def load_dataset(file_path, file_type='csv', sep=',', encoding='latin1'):
     """
     Carga un dataset desde una ruta de archivo.
@@ -464,61 +454,6 @@ def create_all_graphs(file_path, file_type='csv', sep=',', encoding='latin1'):
     else:
         print("No se pudieron cargar los datos. No se pueden crear los gráficos.")
 
-
-
-
-# Ejemplo
-file_path = './datasets/df_processed.csv'
-create_all_graphs(file_path)
-
-# ## Conclusiones de la etapa de exploración y procesamiento de datos
-# 
-# ***Conclusiones de los Gráficos***
-# 
-# - **Distribución de Precios por Región**
-#   - **Variabilidad de Precios**: La variación de precios por unidad entre las áreas es notable.
-#   - **Rango de Precios**: En la mayoría de las regiones, el rango intercuartílico oscila aproximadamente entre 1 y 4. No obstante, algunas regiones como Australia, Alemania, y Suiza tienen un rango más amplio con precios unitarios que alcanzan hasta 5 y más.
-#   - **Outliers**: Casi todas las regiones tienen muchos outliers, lo cual indica que algunos productos son considerablemente más caros que otros.
-# 
-# - **Top 10 Productos con Mayor Devolución**
-#   - **Principales Productos Devueltos**: Los principales productos devueltos se suman hasta “JAM MAKING SET WITH JARS”, “GUMBALL COAT RACK”, y “PLASTERS IN TIN CIRCUS PARADE”.
-#   - **Cantidad de Devoluciones**: Hay diferentes cantidades de devoluciones para estos productos con el mayor número que se aplica a los jam making set with jars.
-#   - **Impacto en el Inventario**: Cuando más grande es el número de articulos que son regresados, puede tener un impacto negativo en las existencias del inventario y sus administraciones.
-# 
-# - **Top 10 Productos con Mayor Compra**
-#   - **Productos Más Comprados**: Los productos más comprados incluyen “PACK OF 72 RETROSPOT CAKE CASES”, “PLASTERS IN TIN WOODLAND ANIMALS”, y “PLASTERS IN TIN CIRCUS PARADE”.
-#   - **Número de Compras**: El número total de compras de estos artículos es alto, con "PACK DE 72 CAJAS PARA PASTELES RETROSPOT" liderando con más de 3000 unidades.
-#   - **Popularidad del Producto**: Estos artículos son muy populares entre los clientes, lo que puede ser una indicación para abastecerse de estos productos.
-# 
-# - **Ventas de Mayor Volumen (Ventas Mensuales)**
-#   - **Temporada Alta**: Noviembre y octubre tienen las ventas más altas, probablemente debido a las compras navideñas.
-#   - **Variabilidad Mensual**: Las ventas varían considerablemente de un mes a otro, lo que indica la influencia de factores estacionales o promociones específicas.
-#   - **Planificación de Inventario**: Conocer las ventas máximas puede ayudar a planificar mejor las estrategias de inventario y marketing.
-# 
-# - **Precio por Unidad vs Cantidad (Precio por Unidad vs Cantidad)**
-#   - **Precios Bajos, Cantidades Altas**: Los productos con precios bajos tienden a venderse en grandes cantidades, por ejemplo, productos de bajo costo con alta demanda.
-#   - **Precios Altos, Cantidades Menores**: Los productos con precios más altos tienden a venderse menos, lo cual es típico de bienes premium o especializados.
-#   - **Estrategia de Precios**: Esta relación puede ayudar a identificar estrategias de precios adecuadas que maximicen tanto las ventas como los ingresos.
-# 
-# - **Ventas por Regiones Principales (Ventas por Región)**
-#   - **Mercados Principales**: Alemania y Francia son los mayores mercados en términos de volumen de ventas.
-#   - **Oportunidades de Expansión**: Regiones con menores ventas, como Arabia Saudita y Bahréin, podrían siginificar oportunidades para expandir a mas zonas el negocio.
-#   - **Estrategias Regionales**: Adaptar las estrategias de marketing y ventas a las metricas brindadas de cada región puede mejorar las ventas y la mejora en la adquisicion de cuota de mercado.
-# 
-# **Conclusión General**
-# 
-# Un mensaje general para los 6 gráficos. Los gráficos presentados proporcionan una visión general del negocio en varios frentes. Expresado en términos generales:
-# 1. Variabilidad regional: la variabilidad en la distribución de precios unitarios entre regiones destaca una clara necesidad de precios y estrategias de marketing regional;
-# 2. Gestión de devoluciones: Los productos con alta devolución de unidades necesitan un replanteamiento y un intento de combatir la calidad y las expectativas del cliente;
-# 3. Productos populares: identificar y mantener un suministro constante de productos populares es vital para garantizar la satisfacción de la demanda.
-# 4. Patrones de ventas en temporada: los picos de ventas en ciertos meses destacan la necesidad de planificación.
-# 5. Relación Precio-Cantidad: comprender cómo funciona la relación entre el precio unitario y la cantidad vendida puede mejorar las estrategias de precios o de inventario.
-# 6. Desempeño regional: el análisis de las ventas por región puede ayudarlo a identificar sus mercados principales y tomar decisiones de expansión.
-# 
-
-# # ML
-
-
 def ml_kmean(path):
     # abrir archivo ya procesado
     df_processed = pd.read_csv(path)
@@ -560,9 +495,8 @@ def ml_kmean(path):
 
     #Método de codo
 
-# Extraer las variables RFM en un nuevo DataFrame
-    from sklearn.cluster import KMeans
-    import numpy as np
+    # Extraer las variables RFM en un nuevo DataFrame
+    
 
     X = rfm_df_v[['recency', 'frequency', 'monetary']].values
     wcss = []
@@ -633,8 +567,6 @@ def ml_kmean(path):
     plt.tight_layout()
     plt.show()
 
-
-
 def ml_plots(path):
     #path = path1[path1['cluster'].isin(['oro', 'bronce', 'plata'])]
     # Diagramas de caja por cluster para cada variable por cluster
@@ -688,7 +620,59 @@ def ml_plots(path):
     print('cluster plata: clientes intermedios ')
     print('cluster bronce: clientes que no han comprado recientemente, compran con poca frecuencia y gastan poco')
 
+# Ejecución -----------------------------------------------------------------------------------
+file_path = './datasets/Online_Retail.csv'
+output_directory =  'datasets'
+df = process_dataset(file_path, output_directory)
 
+
+# Creación de métricas -----------------------------------------------------------------------------------
+file_path = './datasets/df_processed.csv'
+create_all_graphs(file_path)
+
+# Conclusiones de la etapa de exploración y procesamiento de datos -----------------------------------------------------------------------------------
+# ***Conclusiones de los Gráficos***
+# 
+# - **Distribución de Precios por Región**
+#   - **Variabilidad de Precios**: La variación de precios por unidad entre las áreas es notable.
+#   - **Rango de Precios**: En la mayoría de las regiones, el rango intercuartílico oscila aproximadamente entre 1 y 4. No obstante, algunas regiones como Australia, Alemania, y Suiza tienen un rango más amplio con precios unitarios que alcanzan hasta 5 y más.
+#   - **Outliers**: Casi todas las regiones tienen muchos outliers, lo cual indica que algunos productos son considerablemente más caros que otros.
+# 
+# - **Top 10 Productos con Mayor Devolución**
+#   - **Principales Productos Devueltos**: Los principales productos devueltos se suman hasta “JAM MAKING SET WITH JARS”, “GUMBALL COAT RACK”, y “PLASTERS IN TIN CIRCUS PARADE”.
+#   - **Cantidad de Devoluciones**: Hay diferentes cantidades de devoluciones para estos productos con el mayor número que se aplica a los jam making set with jars.
+#   - **Impacto en el Inventario**: Cuando más grande es el número de articulos que son regresados, puede tener un impacto negativo en las existencias del inventario y sus administraciones.
+# 
+# - **Top 10 Productos con Mayor Compra**
+#   - **Productos Más Comprados**: Los productos más comprados incluyen “PACK OF 72 RETROSPOT CAKE CASES”, “PLASTERS IN TIN WOODLAND ANIMALS”, y “PLASTERS IN TIN CIRCUS PARADE”.
+#   - **Número de Compras**: El número total de compras de estos artículos es alto, con "PACK DE 72 CAJAS PARA PASTELES RETROSPOT" liderando con más de 3000 unidades.
+#   - **Popularidad del Producto**: Estos artículos son muy populares entre los clientes, lo que puede ser una indicación para abastecerse de estos productos.
+# 
+# - **Ventas de Mayor Volumen (Ventas Mensuales)**
+#   - **Temporada Alta**: Noviembre y octubre tienen las ventas más altas, probablemente debido a las compras navideñas.
+#   - **Variabilidad Mensual**: Las ventas varían considerablemente de un mes a otro, lo que indica la influencia de factores estacionales o promociones específicas.
+#   - **Planificación de Inventario**: Conocer las ventas máximas puede ayudar a planificar mejor las estrategias de inventario y marketing.
+# 
+# - **Precio por Unidad vs Cantidad (Precio por Unidad vs Cantidad)**
+#   - **Precios Bajos, Cantidades Altas**: Los productos con precios bajos tienden a venderse en grandes cantidades, por ejemplo, productos de bajo costo con alta demanda.
+#   - **Precios Altos, Cantidades Menores**: Los productos con precios más altos tienden a venderse menos, lo cual es típico de bienes premium o especializados.
+#   - **Estrategia de Precios**: Esta relación puede ayudar a identificar estrategias de precios adecuadas que maximicen tanto las ventas como los ingresos.
+# 
+# - **Ventas por Regiones Principales (Ventas por Región)**
+#   - **Mercados Principales**: Alemania y Francia son los mayores mercados en términos de volumen de ventas.
+#   - **Oportunidades de Expansión**: Regiones con menores ventas, como Arabia Saudita y Bahréin, podrían siginificar oportunidades para expandir a mas zonas el negocio.
+#   - **Estrategias Regionales**: Adaptar las estrategias de marketing y ventas a las metricas brindadas de cada región puede mejorar las ventas y la mejora en la adquisicion de cuota de mercado.
+# 
+# **Conclusión General**
+# 
+# Un mensaje general para los 6 gráficos. Los gráficos presentados proporcionan una visión general del negocio en varios frentes. Expresado en términos generales:
+# 1. Variabilidad regional: la variabilidad en la distribución de precios unitarios entre regiones destaca una clara necesidad de precios y estrategias de marketing regional;
+# 2. Gestión de devoluciones: Los productos con alta devolución de unidades necesitan un replanteamiento y un intento de combatir la calidad y las expectativas del cliente;
+# 3. Productos populares: identificar y mantener un suministro constante de productos populares es vital para garantizar la satisfacción de la demanda.
+# 4. Patrones de ventas en temporada: los picos de ventas en ciertos meses destacan la necesidad de planificación.
+# 5. Relación Precio-Cantidad: comprender cómo funciona la relación entre el precio unitario y la cantidad vendida puede mejorar las estrategias de precios o de inventario.
+# 6. Desempeño regional: el análisis de las ventas por región puede ayudarlo a identificar sus mercados principales y tomar decisiones de expansión.
+# ML -----------------------------------------------------------------------------------
 ml_kmean("./datasets/df_processed.csv")
 
 
@@ -697,8 +681,7 @@ df_final = pd.read_csv("./datasets/df_final.csv")
 
 ml_plots(df_final)
 
-# ## Conclusiones de Clustering
-# 
+# Conclusiones de Clustering -----------------------------------------------------------------------------------
 # La metodología RFM (Recency, Frequency, Monetary) es una técnica utilizada  para segmentar y entender el comportamiento de los clientes en base a estas tres variables. Por lo anterior, se obtuvieron las métricas: Recency, Frequency y Monetary (RFM) para el conjunto de datos analizados, donde:
 # 
 # - Recency: Muestra la diferencia en días entre la fecha más reciente y la última compra de cada cliente.
@@ -724,9 +707,7 @@ ml_plots(df_final)
 # - Los clientes bronce pueden ser incentivados con promociones para aumentar su frecuencia de compra y gasto total.
 # 
 
-# ## Dashboard
-
-# ###
+# Dashboard -----------------------------------------------------------------------------------
 # https://kelvinsuarez.github.io/rfm-analysis-visualization-react/
 
 
