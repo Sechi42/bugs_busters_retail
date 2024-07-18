@@ -1,7 +1,6 @@
-# %% [markdown]
 # # Area de pruebas
 
-# %%
+
 # Carga y procesamiento de datos.
 import pandas as pd
 import os
@@ -255,13 +254,13 @@ def process_dataset(file_path, output_directory, file_type='csv', **kwargs):
     return df
 
 
-# %%
+
 # Ejemplo de uso
 file_path = './datasets/Online_Retail.csv'
 output_directory =  'datasets'
 df = process_dataset(file_path, output_directory)
 
-# %%
+
 # Creación de métricas
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -467,12 +466,11 @@ def create_all_graphs(file_path, file_type='csv', sep=',', encoding='latin1'):
 
 
 
-# %%
+
 # Ejemplo
 file_path = './datasets/df_processed.csv'
 create_all_graphs(file_path)
 
-# %% [markdown]
 # ## Conclusiones de la etapa de exploración y procesamiento de datos
 # 
 # ***Conclusiones de los Gráficos***
@@ -518,10 +516,9 @@ create_all_graphs(file_path)
 # 6. Desempeño regional: el análisis de las ventas por región puede ayudarlo a identificar sus mercados principales y tomar decisiones de expansión.
 # 
 
-# %% [markdown]
 # # ML
 
-# %%
+
 def ml_kmean(path):
     # abrir archivo ya procesado
     df_processed = pd.read_csv(path)
@@ -637,7 +634,7 @@ def ml_kmean(path):
     plt.show()
 
 
-# %%
+
 def ml_plots(path):
     #path = path1[path1['cluster'].isin(['oro', 'bronce', 'plata'])]
     # Diagramas de caja por cluster para cada variable por cluster
@@ -691,16 +688,15 @@ def ml_plots(path):
     print('cluster plata: clientes intermedios ')
     print('cluster bronce: clientes que no han comprado recientemente, compran con poca frecuencia y gastan poco')
 
-# %%
+
 ml_kmean("./datasets/df_processed.csv")
 
 
-# %%
+
 df_final = pd.read_csv("./datasets/df_final.csv")
 
 ml_plots(df_final)
 
-# %% [markdown]
 # ## Conclusiones de Clustering
 # 
 # La metodología RFM (Recency, Frequency, Monetary) es una técnica utilizada  para segmentar y entender el comportamiento de los clientes en base a estas tres variables. Por lo anterior, se obtuvieron las métricas: Recency, Frequency y Monetary (RFM) para el conjunto de datos analizados, donde:
@@ -728,10 +724,8 @@ ml_plots(df_final)
 # - Los clientes bronce pueden ser incentivados con promociones para aumentar su frecuencia de compra y gasto total.
 # 
 
-# %% [markdown]
 # ## Dashboard
 
-# %% [markdown]
 # ###
 # https://kelvinsuarez.github.io/rfm-analysis-visualization-react/
 
