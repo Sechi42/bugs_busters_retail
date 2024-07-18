@@ -8,19 +8,50 @@ from sklearn.cluster import KMeans
 import numpy as np
 
 # Funciones -----------------------------------------------------------------------------------
+def process_dataset(file_path, output_directory, file_type='csv', **kwargs):
+    """
+    Procesa el dataset desde la carga hasta la limpieza y guarda el resultado final, eliminando archivos intermedios.
 
-def encabezados(df):
-    '''
-    Renombra las columnas para que estén de acuerdo al estándar 'snake_case'.
-    '''
-    new_col_names = []
-    for name in df.columns:
-        name_lowered = name.lower()
-        name_stripped = name_lowered.strip()
-        name_no_spaces = name_stripped.replace(' ', '_')
-        name_string = str(name_no_spaces)
-        new_col_names.append(name_string)
-    df.columns = new_col_names
+    Parameters:
+        file_path (str): La ruta del archivo de entrada.
+        output_directory (str): El directorio donde se guardarán los archivos de salida.
+        file_type (str): El tipo de archivo para guardar ('csv' o 'excel'). El valor por defecto es 'csv'.
+        **kwargs: Argumentos adicionales que se pasarán a la función de carga y guardado.
+
+    Returns:
+        pd.DataFrame: El DataFrame procesado.
+    """
+    df = load_dataset(file_path, file_type, **kwargs)
+    if df is None:
+        return None
+
+    intermediate_paths = []
+
+    # Paso 1: Limpieza de datos
+    df, _ = clear_data(df)
+    intermediate_path = f"{output_directory}df_step1.{file_type}"
+    save_dataset(df, intermediate_path, file_type, index=False)
+    intermediate_paths.append(intermediate_path)
+
+    # Paso 2: Eliminar outliers
+    df = clean_data(df)
+    intermediate_path = f"{output_directory}df_step2.{file_type}"
+    save_dataset(df, intermediate_path, file_type, index=False)
+    intermediate_paths.append(intermediate_path)
+
+    # Paso 3: Categorizar transacciones
+    df = categorize_transaction(df)
+    intermediate_path = f"{output_directory}df_step3.{file_type}"
+    save_dataset(df, intermediate_path, file_type, index=False)
+    intermediate_paths.append(intermediate_path)
+
+    # Guardar el dataset final
+    final_path = f"{output_directory}df_processed.{file_type}"
+    save_dataset(df, final_path, file_type, index=False)
+
+    # Eliminar archivos intermedios
+    remove_intermediate_files(intermediate_paths)
+
     return df
 
 def load_dataset(file_path, file_type='csv', sep=',', encoding='latin1'):
@@ -62,6 +93,20 @@ def load_dataset(file_path, file_type='csv', sep=',', encoding='latin1'):
     except Exception as e:
         print(f"Ocurrió un error: {e}")
         return None
+
+def encabezados(df):
+    '''
+    Renombra las columnas para que estén de acuerdo al estándar 'snake_case'.
+    '''
+    new_col_names = []
+    for name in df.columns:
+        name_lowered = name.lower()
+        name_stripped = name_lowered.strip()
+        name_no_spaces = name_stripped.replace(' ', '_')
+        name_string = str(name_no_spaces)
+        new_col_names.append(name_string)
+    df.columns = new_col_names
+    return df
 
 def clear_data(df, columns=['description', 'customer_id'], critic_columns=['quantity', 'unit_price', 'customer_id', 'total_cost']):
     """
@@ -211,53 +256,7 @@ def remove_intermediate_files(paths):
         except Exception as e:
             print(f"No se pudo eliminar el archivo {path}: {e}")
 
-def process_dataset(file_path, output_directory, file_type='csv', **kwargs):
-    """
-    Procesa el dataset desde la carga hasta la limpieza y guarda el resultado final, eliminando archivos intermedios.
-
-    Parameters:
-        file_path (str): La ruta del archivo de entrada.
-        output_directory (str): El directorio donde se guardarán los archivos de salida.
-        file_type (str): El tipo de archivo para guardar ('csv' o 'excel'). El valor por defecto es 'csv'.
-        **kwargs: Argumentos adicionales que se pasarán a la función de carga y guardado.
-
-    Returns:
-        pd.DataFrame: El DataFrame procesado.
-    """
-    df = load_dataset(file_path, file_type, **kwargs)
-    if df is None:
-        return None
-
-    intermediate_paths = []
-
-    # Paso 1: Limpieza de datos
-    df, _ = clear_data(df)
-    intermediate_path = f"{output_directory}/df_step1.{file_type}"
-    save_dataset(df, intermediate_path, file_type, index=False)
-    intermediate_paths.append(intermediate_path)
-
-    # Paso 2: Eliminar outliers
-    df = clean_data(df)
-    intermediate_path = f"{output_directory}/df_step2.{file_type}"
-    save_dataset(df, intermediate_path, file_type, index=False)
-    intermediate_paths.append(intermediate_path)
-
-    # Paso 3: Categorizar transacciones
-    df = categorize_transaction(df)
-    intermediate_path = f"{output_directory}/df_step3.{file_type}"
-    save_dataset(df, intermediate_path, file_type, index=False)
-    intermediate_paths.append(intermediate_path)
-
-    # Guardar el dataset final
-    final_path = f"{output_directory}/df_processed.{file_type}"
-    save_dataset(df, final_path, file_type, index=False)
-
-    # Eliminar archivos intermedios
-    remove_intermediate_files(intermediate_paths)
-
-    return df
-
-def load_dataset(file_path, file_type='csv', sep=',', encoding='latin1'):
+def load_dataset_1(file_path, file_type='csv', sep=',', encoding='latin1'):
     """
     Carga un dataset desde una ruta de archivo.
 
@@ -376,7 +375,6 @@ def top_regions_sales(df, column1='transaction_type', label='ventas', column2='r
     plt.show()
     return sales_df
 
-
 def top_products_sales(df, column1='description', column2='quantity'):
     """
     Función para generar un gráfico de barras que muestra los productos de mayor venta a nivel global.
@@ -442,7 +440,7 @@ def price_by_region(df):
     return None
 
 def create_all_graphs(file_path, file_type='csv', sep=',', encoding='latin1'):
-    df = load_dataset(file_path, file_type, sep, encoding)
+    df = load_dataset_1(file_path, file_type, sep, encoding)
     if df is not None:
         top_months_sales(df)
         unit_price_volume_relation(df)
@@ -534,7 +532,7 @@ def ml_kmean(path):
     df_final_1 = pd.merge(df, rfm_df_v, on='customer_id', how='inner')
     df_final = df_final_1[df_final_1['cluster'].isin(['oro', 'bronce', 'plata'])]
 
-    df_final.to_csv('datasets/df_final.csv', index=False)
+    df_final.to_csv('files/datasets/output/df_final.csv', index=False)
 
 
     fig, ax = plt.subplots(1, 2, figsize=(10, 5))
@@ -621,13 +619,13 @@ def ml_plots(path):
     print('cluster bronce: clientes que no han comprado recientemente, compran con poca frecuencia y gastan poco')
 
 # Ejecución -----------------------------------------------------------------------------------
-file_path = './datasets/Online_Retail.csv'
-output_directory =  'datasets'
+file_path = 'files/datasets/input/Online_Retail.csv'
+output_directory =  'files/datasets/intermediate/'
 df = process_dataset(file_path, output_directory)
 
 
 # Creación de métricas -----------------------------------------------------------------------------------
-file_path = './datasets/df_processed.csv'
+file_path = 'files/datasets/intermediate/df_processed.csv'
 create_all_graphs(file_path)
 
 # Conclusiones de la etapa de exploración y procesamiento de datos -----------------------------------------------------------------------------------
@@ -673,14 +671,14 @@ create_all_graphs(file_path)
 # 5. Relación Precio-Cantidad: comprender cómo funciona la relación entre el precio unitario y la cantidad vendida puede mejorar las estrategias de precios o de inventario.
 # 6. Desempeño regional: el análisis de las ventas por región puede ayudarlo a identificar sus mercados principales y tomar decisiones de expansión.
 # ML -----------------------------------------------------------------------------------
-ml_kmean("./datasets/df_processed.csv")
+ml_kmean("files/datasets/intermediate/df_processed.csv")
 
 
 
-df_final = pd.read_csv("./datasets/df_final.csv")
+df_final = pd.read_csv("files/datasets/output/df_final.csv")
 
 ml_plots(df_final)
-
+df_final.columns
 # Conclusiones de Clustering -----------------------------------------------------------------------------------
 # La metodología RFM (Recency, Frequency, Monetary) es una técnica utilizada  para segmentar y entender el comportamiento de los clientes en base a estas tres variables. Por lo anterior, se obtuvieron las métricas: Recency, Frequency y Monetary (RFM) para el conjunto de datos analizados, donde:
 # 
