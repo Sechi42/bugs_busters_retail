@@ -311,3 +311,6 @@ geckodriver.log
 *.code-workspace
 .history
 .vscode
+
+# carpeta de entorno virtual
+venv_bb/
