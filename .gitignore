@@ -25,6 +25,7 @@ files
 *.pmml
 .vscode
 *.jar
+vnv_bb/
 
 # R
 
